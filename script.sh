@@ -8,9 +8,9 @@ awk '
 BEGIN { RS="<tr"; IGNORECASE=1 }
 /<td[^>]*>[^<]*Spain[^<]*<\/td>/ {
     if ($0 ~ /<span[^>]*>[^<]*paused[^<]*<\/span>/) {
-        print "Waiting"
+        msmtp "$MAIL_TO"
     } else {
-        print "OKAY"
+        msmtp "$MAIL_TO"
     }
 }
-' pp.html
+' "$html"
