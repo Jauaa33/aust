@@ -1,0 +1,42 @@
+#!/bin/bash
+
+# Configuración: Cambia estos valores antes de ejecutar
+EMAIL="tuemail@gmail.com"
+APP_PASS="tu_contraseña_de_aplicacion"
+
+# Instalar msmtp si no está instalado
+if ! command -v msmtp &> /dev/null
+then
+    echo "Instalando msmtp..."
+    sudo apt update && sudo apt install -y msmtp msmtp-mta
+else
+    echo "msmtp ya está instalado."
+fi
+
+# Crear el archivo de configuración ~/.msmtprc
+CONFIG_FILE="$HOME/.msmtprc"
+
+cat > "$CONFIG_FILE" <<EOF
+# Configuración msmtp para Gmail
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        $HOME/.msmtp.log
+
+account        gmail
+host           smtp.gmail.com
+port           587
+from           $EMAIL
+user           $EMAIL
+password       $APP_PASS
+
+account default : gmail
+EOF
+
+# Ajustar permisos
+chmod 600 "$CONFIG_FILE"
+
+echo "Configuración msmtp creada en $CONFIG_FILE"
+echo "Puedes probar msmtp con:"
+echo "echo 'Prueba de correo' | msmtp destinatario@ejemplo.com"
